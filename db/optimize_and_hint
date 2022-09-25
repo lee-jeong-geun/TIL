@@ -189,9 +189,13 @@ JDBC가 자체적으로 버퍼링하는 이유는 전체 처리시간이 짧고 
 싶지만 검색해야될 키워드를 잘 모르겠다... 구글링은 못하겠어서 직접 jdbctemplate의 query 부분 코드를 까봤는데 mysql connector로 연결되고 이쪽 코드 자체가 실제 쿼리를 쏴서 받는 핵심기능
 을 담당하고 있는 것으로 보인다. NativeProtocol class의 readAllResults 메서드 코드를 보면 streamResults의 여부에 따라 남은 resultSet을 전부 가져오는지 아닌지로 되어있다.
 코드를 보면서 알게된 소소한 사실은 resultSet의 native는 연결리스트로 구현 되어있다.(resultSet -> resultSet -> resultSet). streamResults가 false면 resultSet을 다 받을때까지 
-MySQL서버로 계속 패킷을 날린다. 겁나게 복잡하긴 하다.... 
+MySQL서버로 계속 패킷을 날린다. 겁나게 복잡하긴 하다.... enableStreamingResults 메서드를 통해서 스트리밍 방식으로 바꿀 수 있다.(버퍼링 방식이 디폴트임)
 
-
+1. 인덱스 사용 정렬   실행 계획에 별도 표기 없음.
+2. join에서 드라이빙 테이블(드라이빙 테이블 : 먼저 접근되는 테이블.)만 정렬  실행계획에 Using filesort 표시.
+3. join에서 join 결과를 임시 테이블로 저장 후 정렬   실행계획에 Using temporary; Using filesort 표시.
+위의 3가지 방법 중 1번만 스트리밍 형태로 처리되고 나머지는 버퍼링 방식이다.
+인덱스를 이용하면 LIMIT으로 제한된 건수만큼만 읽으면서 바로바로 클라이언트로 결과 전송 가능. 나머지는 레코드를 디스크로부터 읽고 정렬한 다음에야 LIMIT으로 제한된 건수만큼 클라이언트로 전송 가능하다.
 
 
 
