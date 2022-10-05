@@ -213,7 +213,14 @@ Using filesort")가 표시되지 않는다.
 -->abbcaaaabbc를 그룹핑하기 위해서는 정렬을 통해 클러스터링을 해야 추가적인 메모리가 필요하지 않다고 생각. 여기서 추가적인 메모리라는 말은 데이터 외적으로 그룹핑을 위한 추가적인 메모리를 말함.
 단순하게 정렬해서 aaaaabbbbcc를 만든다면 그룹핑하기 굉장히 수월해짐. 정렬이 아니라면 aaaaa bbbb cc를 어딘가에 저장을 해야함.
 
-
+루스 인덱스 스캔 방식의 group by
+인덱스의 레코드를 건너 뛰면서 필요한 부분만 읽음. 실행 계획의 extra 컬럼에 Using index for group-by 표시.
+ex) select emp_no
+    from salaries
+    where from_date = `1985-03-01`
+    group by emp_no
+이고 인덱스는 (emp_no, from_date)
+--> 잠깐 봤을 땐 인덱스 풀 스캔 돌 것 같다. 그 이유는 emp_no로 group by하기 때문.. 같은 emp_no에 대해서 from_date를 찾기 위해선 풀 스캔이 맞다고 생각됨.
 
 
 
