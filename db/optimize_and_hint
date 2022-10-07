@@ -238,7 +238,22 @@ ex) select emp_no
 -->(1000만개, 유니크한 키의 개수 900만) 테이블에서 특정한 값의 레인지를 찾는 것은 당연히 레인지 스캔이 빠르다.  하지만 (1000만개, 유니크한 키의 개수 100만) 테이블이라면 루스가 빠르다.
 즉 루스 인덱스 스캔은 껑충 껑충 뛰는 범위를 늘려야 성능이 좋다.
 
-
+임시 테이블을 사용하는 group by
+ex) select e.last_name, AVG(s.salary)
+    from employees e, salaries s
+    where s.emp_no = e.emp_no
+    group by e.last_name
+위의 예제는 인덱스를 사용할 수 없기 때문에 using temporary를 사용한다.
+--> e 테이블에서 group by를 하지만 s.slaray 컬럼으로 avg 연산을 하기 때문에 인덱스를 못탐.
+MySQL 8.0 이전 버전까지는 group by가 사용된 쿼리는 그루핑 되는 컬럼을 기준으로 묵시적인 정렬까지 수행하지만 위의 쿼리는 using filesort가 표시되지 않았다.
+8.0 이전 버전에서는 last_name으로 그룹핑을 하고 정렬까지 하므로 결과는 last_name정렬 순으로 나온다.
+8.0에서는 group by가 필요한 경우 내부적으로 group by 절의 컬럼들로 구성된 유니크 인덱스를 가진 임시 테이블 생성해서 중복 제거와 집합 함수 연산(AVG)을 수행한다. 조인의 결과를 한 건씩 가져와
+임시테이블에서 중복 체크 하면서 insert or update를 실행한다. 별도의 정렬 작업 없이 group by가 처리된다.
+create temporary table ... (
+    last_name varchar(16),
+    salary int,
+    unique index ux_lastname (last_name)
+) 이런 임시 테이블을 생성한다.
 
 
 
