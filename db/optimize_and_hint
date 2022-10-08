@@ -254,7 +254,8 @@ create temporary table ... (
     salary int,
     unique index ux_lastname (last_name)
 ) 이런 임시 테이블을 생성한다.
-
+--> select의 컬럼과 임시 테이블의 컬럼이 일치하는 것을 보면 딱 필요한 값들만 select에 넣어야 겠다는 생각이든다.
+MySQL5.7 이전까지는 group by가 사용되면 자동으로 그루핑 컬럼 기준으로 정렬 되는데, 정렬이 필요하지 않은 경우라면 order by null을 넣어서 성능 향상 시킬 수 있다.
 
 
 
