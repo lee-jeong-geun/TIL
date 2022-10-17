@@ -285,6 +285,14 @@ using temporary가 표시되지 않을 때도 임시테이블 사용 가능. 1 ~
 8.0 이전 버전까지는 union all이 사용된 쿼리(select_type 컬럼이 union result인 경우)도 항상 내부 임시 테이블 생성함.
 8.0 이후부턴 임시테이블 사용 안하도록 개선됨. union은 제외. 중복 제거해야하니깐~
 
+임시 테이블이 디스크에 생성되는 경우
+1. union이나 union all에서 select 되는 컬럼 중에서 길이가 512바이트 이상인 크기의 컬럼이 있는 경우
+2. group by나 distinct 컬럼에서 512바이트 이상인 크기의 컬럼이 있는 경우
+3. 메모리 임시 테이블의 크기가(MEMORY 스토리지 엔진에서) tmp_table_size 또는 max_heap_table_size 시스템 변수보다 크거나(TempTable 스토리지 엔진에서) temptable_max_ram 시스템 변수
+값보다 큰 경우
+
+실행 계획상에서 using temporary가 표시되면 임시 테이블 사용함. 하지만 메모리에서 처리됐는지 디스크에서 처리됐는지 모름. 또 몇개의 임시테이블이 사용됐는지 모름. using temporary가 한 번 표시됐다고
+해서 임시 테이블을 하나만 사용한건 아님. 임시 테이블이 디스크에 생성됐는지 메모리에 생성됐는지 확인하려면 show session status like 'Created_tmp%'; 확인하면 된다.
 
 
 
