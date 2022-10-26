@@ -31,3 +31,4 @@ jdbc에서 mysql은 벌크 인서트 옵션이 false이므로 옵션을 따로 �
 jdbc url에 rewritebatchedstatements=true 옵션을 주면 된다. 1000개 insert에 대해서 30000ms -> 10000ms로 줄어들었다. 인터넷에서는 훨씬 많이 줄어들었는데 이상하다.
 시간이 줄어드는 것은 auto increment lock 관련으로 보인다.
 
+docker file로 java 실행 시 JAVA_OPTS은 ARG가 아니라 ENV로 줘야 java 실행 시 파라미터로 들어간다.
