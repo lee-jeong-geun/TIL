@@ -1,1 +1,9 @@
-스레드 생성을 담당하는 ExecutorService의 구현체를 Executors를 이용해 생성한다.(Executoros는 factory)
+쓰레드 생성을 담당하는 ExecutorService의 구현체를 Executors를 이용해 생성한다.(Executoros는 factory)
+
+ThreadPoolExecutor
+ExecutorService 구현체 중 하나이다.
+corePoolSize : pool안에 최소 쓰레드 개수
+maximumPoolSize : pool의 최대 쓰레드 개수
+keepAliveTime : 쓰레드 개수가 corePoolSize를 넘을 경우 keepAliveTime의 값보다 오래된 쓰레드 종료시킴
+workQueue : 작업을 저장하는 큐. 큐에서 작업을 빼낸 뒤 쓰레드 풀에 있는 쓰레드로 해당 작업 실행.
+
