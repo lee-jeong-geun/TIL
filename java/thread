@@ -7,3 +7,13 @@ maximumPoolSize : pool의 최대 쓰레드 개수
 keepAliveTime : 쓰레드 개수가 corePoolSize를 넘을 경우 keepAliveTime의 값보다 오래된 쓰레드 종료시킴
 workQueue : 작업을 저장하는 큐. 큐에서 작업을 빼낸 뒤 쓰레드 풀에 있는 쓰레드로 해당 작업 실행.
 
+#여기 매우 중요!!!!!!!!!!!!!
+현재 쓰레드 풀에 할당된 쓰레드의 개수가 corePoolSize 이상일 경우 workQueue의 용량에 따라서 새로운 쓰레드를 할당 하냐 마냐로 나뉜다.
+Executors로 ThreadPoolExcutor를 만드는 경우  workQueue는 LinkedBlockingQueue가 들어가고 default 생성자 이므로 capacity는 Integer.MAX_VALUE가 된다.
+그렇게 되면 보통의 경우(queue에 있는 데이터 개수가 Integer.MAX_VALUE를 초과하게 되는 경우는 잘 없을 듯 하다.)라면 workQueue에 insert만 하고 끝난다. 
+즉 현재 쓰레드 개수는 유지하고 workQueue에 작업을 insert만 하고 끝난다는 것이다.
+workQueue의 데이터 개수가 capacity와 동일하다면 workQueue에 insert를 하지 않고 새로운 쓰레드를 생성 후 그 쓰레드에 해당 작업을 할당한다. 그리고 그 쓰레드를 쓰레드 풀에 넣는다.
+물론 쓰레드를 생성하는 것도 maximumPoolSize보다 작을 경우에 생성한다.
+
+중요한 이유는 corePoolSize를 1로 잡고 workQueue의 capacity를 따로 주지 않으면 해당 쓰레드 풀은 쓰레드 1개로 모든 작업을 커버치게 된다.
+작업이 수십만개가 쌓여도 workQueue의 capacity는 Integer.MAX_VALUE이기 때문에 추가 쓰레드를 생성하지 않는다. 오로지 1개의 쓰레드로 작업을 처리하게 된다.
