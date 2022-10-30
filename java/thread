@@ -1,0 +1,1 @@
+스레드 생성을 담당하는 ExecutorService의 구현체를 Executors를 이용해 생성한다.(Executoros는 factory)
